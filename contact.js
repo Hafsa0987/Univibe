@@ -1,0 +1,1 @@
+document.getElementById('contactForm').addEventListener('submit',e=>{e.preventDefault();showAlert(document.getElementById('contactAlert'),'Thanks for reaching out! This demo form is validated in the browser. Connect an email service or database to receive messages.');e.target.reset()});

@@ -1,0 +1,9 @@
+const id=new URLSearchParams(location.search).get('id');
+const holder=document.getElementById('details');
+if(!id){holder.textContent='No event was selected. Please return to the events page.';}
+else api('event',{id}).then(r=>{
+ const e=r.event;
+ holder.className='detail-layout';
+ holder.innerHTML=`<article class="detail-main"><img src="${e.image_url||'assets/images/campus-festival.png'}" onerror="this.onerror=null;this.src='assets/images/campus-festival.png'" alt="${escapeHtml(e.title)}"><div class="detail-copy"><span class="tag">${escapeHtml(e.category)}</span><h1>${escapeHtml(e.title)}</h1><p>${escapeHtml(e.description)}</p><h3>About this event</h3><p>Connect with fellow students, learn something new and make the most of your campus experience. Register before the deadline to secure your place.</p></div></article><aside class="detail-side"><h3>Event information</h3><div class="detail-row"><b>Date & time</b>${formatDate(e.event_date)} · ${e.start_time.slice(0,5)}–${e.end_time.slice(0,5)}</div><div class="detail-row"><b>Venue</b>${escapeHtml(e.venue)}</div><div class="detail-row"><b>Registration deadline</b>${formatDate(e.registration_deadline)}</div><div class="detail-row"><b>Seats remaining</b><span class="seats">${e.seats_left} of ${e.capacity}</span></div><button id="registerEvent" class="btn btn-primary">Register for this event →</button><p class="muted" style="font-size:12px">You’ll be asked to log in before registration.</p></aside>`;
+ document.getElementById('registerEvent').onclick=async()=>{try{await api('register_event',{event_id:e.id});alert('You are registered! Check your student dashboard.');location.href='student-dashboard.html'}catch(err){alert(err.message);if(err.message.toLowerCase().includes('log in'))location.href='login.html'}};
+}).catch(e=>holder.textContent=e.message);
